@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Le Mur Rouge</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#111;font-family:system-ui,sans-serif;user-select:none}
+#st{position:fixed;inset:0;transition:transform 1s cubic-bezier(.6,0,.3,1);overflow:hidden}
+#room,#btns{position:absolute;inset:0}
+#btns{pointer-events:none}
+#room{background:linear-gradient(#0000 0,#0000 83%,#cfccc6 83.2%,#e2dfda 100%),radial-gradient(ellipse at 40% 35%,#fff 0,#f1f1ee 70%,#e4e4e0 100%);transition:filter 1s}
+#room::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,#0000 55%,#0003 100%);pointer-events:none}
+.a{position:absolute}
+.door{left:80%;top:24%;width:14%;height:60%;background:radial-gradient(ellipse at 50% 60%,#fffbe0,#ffe9a0 60%,#f4c95a);border:.8vmin solid #c9c9c3;box-shadow:inset 0 0 2vmin #0003}
+.leaf{position:absolute;inset:0;background:linear-gradient(90deg,#e6e6e0,#d6d6cf);transform:perspective(120vmin) rotateY(0);transform-origin:left center;transition:transform 1.8s cubic-bezier(.5,0,.2,1);box-shadow:inset 0 0 0 1.2vmin #dedfd9,inset 0 0 0 1.4vmin #c4c4bd}
+.leaf::after{content:"";position:absolute;right:8%;top:50%;width:2vmin;height:2vmin;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ccc,#777)}
+.open .leaf{transform:perspective(120vmin) rotateY(-78deg)}
+.rb{--s:4vmin;position:absolute;pointer-events:auto;width:var(--s);height:var(--s);transform:translate(-50%,-50%);border-radius:50%;border:0;padding:0;cursor:pointer;background:radial-gradient(circle at 35% 30%,#ff8a7a 0,#e0201c 35%,#8e0a0a 100%);box-shadow:0 0 0 calc(var(--s)*.14) #2a2a2d,0 0 0 calc(var(--s)*.2) #9a9da3,0 .5vmin 1vmin #0008,inset 0 -.4vmin .6vmin #0006;transition:left .7s ease,top .7s ease,transform .1s}
+.rb:hover{filter:brightness(1.15)}
+.rb.p,.rb:active{transform:translate(-50%,-50%) scale(.86)}
+.scare .rb{transition:left .25s,top .25s}
+.fall .rb{transition:top .9s cubic-bezier(.6,0,1,.5),left .9s}
+.ov{position:fixed;inset:0;z-index:20}
+.blk{background:#0008;display:grid;place-items:center}
+.ov>.rb{pointer-events:auto}
+.ad{position:absolute;width:min(62vw,240px);padding:44px 12px 12px;border:2px solid #333;box-shadow:4px 4px 0 #0006;font:bold 14px system-ui;text-align:center;color:#111}
+.ad b{display:block;margin-bottom:8px}
+.go{background:#0a0;color:#fff;border:0;padding:8px 14px;font-weight:bold;cursor:pointer}
+.x{position:absolute;right:4px;top:4px;width:34px;height:34px;background:#fff;border:2px solid #333;font-size:22px;line-height:30px;font-style:normal;cursor:pointer;text-align:center}
+.vid{background:#000;display:grid;place-items:center}
+.scr{width:min(92vw,640px);aspect-ratio:16/9;position:relative;overflow:hidden;background:linear-gradient(120deg,#f06,#fa0,#0cf,#f06);background-size:300% 300%;animation:bg 4s linear infinite}
+.scr p{position:absolute;bottom:8px;left:12px;margin:0;color:#fff;font:bold 14px system-ui}
+.dvd{position:absolute;left:0;top:0;font:900 18px system-ui;color:#fff;background:#0008;padding:4px 8px;animation:bx 3s linear infinite alternate,by 2.3s linear infinite alternate}
+.skip{position:absolute;right:16px;bottom:16px;padding:10px 16px;border:0;background:#fff;font-weight:bold;cursor:pointer}
+.skip:disabled{opacity:.6;cursor:default}
+@keyframes bg{to{background-position:300% 0}}
+@keyframes bx{to{left:calc(100% - 170px)}}
+@keyframes by{to{top:calc(100% - 34px)}}
+.dark{pointer-events:none;background:radial-gradient(circle 13vmin at var(--mx,50%) var(--my,50%),#0000 0,#000f 100%)}
+.blur{background:none;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);-webkit-mask:radial-gradient(circle 13vmin at var(--mx,50%) var(--my,50%),#0000 90%,#000 100%);mask:radial-gradient(circle 13vmin at var(--mx,50%) var(--my,50%),#0000 90%,#000 100%)}
+.bsod{background:#0a5bb5;color:#fff;padding:8vw;display:block}
+.bsod h1{font-size:14vw;margin:0}
+.bsod button{padding:12px 18px;font-size:16px;font-weight:bold;cursor:pointer;border:0}
+.ck{width:min(92vw,420px);background:#fff;padding:18px;border-radius:12px;font-size:14px;color:#222}
+.ck h3{margin:0 0 6px}
+.ck .ok{background:#0a7;color:#fff;border:0;padding:14px;width:100%;font-size:18px;font-weight:bold;cursor:pointer;border-radius:8px}
+.ck summary{font-size:10px;color:#888;cursor:pointer;margin-top:10px}
+.ck label{display:block;margin:4px 0}
+.hint{position:absolute;bottom:10%;left:0;right:0;text-align:center;color:#fff;font:bold 18px system-ui}
+.quake{animation:q .25s 6}
+@keyframes q{20%{transform:translate(-1.5vmin,.8vmin)}40%{transform:translate(1.2vmin,-1vmin)}60%{transform:translate(-1vmin,-.6vmin)}80%{transform:translate(1vmin,1vmin)}}
+.disco{animation:dc .6s linear infinite}
+@keyframes dc{from{filter:hue-rotate(0) saturate(2.5) brightness(1.2)}to{filter:hue-rotate(360deg) saturate(2.5) brightness(1.2)}}
+#hud{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:8px;z-index:30;background:#000a;color:#fff;font-size:13px;padding:6px 12px;border-radius:8px;pointer-events:none}
+#toast{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 4%);left:50%;transform:translateX(-50%);z-index:40;background:#000d;color:#fff;font-size:15px;padding:10px 18px;border-radius:999px;opacity:0;transition:opacity .3s;pointer-events:none;max-width:92vw;text-align:center}
+#toast.on{opacity:1}
+</style></head><body>
+<div id="st"><div id="room"><div class="a door" id="door"><div class="leaf"></div></div></div>
+<div id="btns"></div></div>
+<div id="fx"></div>
+<div id="hud">Pressés : <b id="n">0</b> · Surprises : <b id="k">0</b>/14</div>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),R=(a,b)=>a+Math.random()*(b-a),P=a=>a[Math.random()*a.length|0],cl=(v,a,b)=>Math.max(a,Math.min(b,v));
+const st=$('#st'),room=$('#room'),L=$('#btns'),fx=$('#fx'),tt=$('#toast');
+let n=0,busy=0,q=[],B=[],flee=0,tm,seen=new Set(),ac;
+const pos=(b,x,y)=>{b.style.left=x+'%';b.style.top=y+'%'};
+function mk(x,y,s=4){const b=document.createElement('button');b.className='rb';b.setAttribute('aria-label','Bouton rouge');pos(b,x,y);b.style.setProperty('--s',s+'vmin');b.onclick=()=>press(b);L.append(b);B.push(b);return b}
+const ov=(c,h)=>{const d=document.createElement('div');d.className='ov '+c;d.innerHTML=h;fx.append(d);return d};
+const done=o=>{o.remove();busy=0};
+function say(t){tt.textContent=t;tt.classList.add('on');clearTimeout(tm);tm=setTimeout(()=>tt.classList.remove('on'),2800)}
+function beep(){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=R(180,520);g.gain.value=.07;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+.08)}catch(e){}}
+const sh=()=>B.forEach(b=>pos(b,R(5,95),R(10,90)));
+const adTxt=['GAGNEZ UN BOUTON ROUGE GRATUIT !!','Des boutons célibataires près de chez vous','⚠ VOTRE MUR A 3 VIRUS','Ce truc que les murs détestent','Vous êtes le 1 000 000e visiteur !','-90 % sur les vis cruciformes'];
+const E=[
+['Les boutons se remélangent !',sh],
+['Tout change de couleur…',()=>{room.style.filter=P(['hue-rotate(140deg) saturate(1.5)','invert(1) hue-rotate(180deg)','grayscale(1) sepia(.8) contrast(1.1)','hue-rotate(260deg) saturate(2)','saturate(3) contrast(1.2)'])}],
+['Spam de pubs : fermez-les toutes !',()=>{busy=1;const bg=ov('blk','');let live=0,tot=0;
+ const add=()=>{if(tot>=14)return;tot++;live++;const a=document.createElement('div');a.className='ad';a.style.cssText=`left:${R(2,68)}%;top:${R(4,70)}%;background:hsl(${R(0,360)|0} 85% 86%)`;
+  a.innerHTML=`<b>${P(adTxt)}</b><button class="go">OK !</button><i class="x">×</i>`;const x=a.querySelector('.x');
+  
+  x.onclick=()=>{a.remove();if(!--live)setTimeout(()=>{done(bg);say('Pubs fermées. Respire.')},200)};
+  a.querySelector('.go').onclick=()=>{add()};bg.append(a)};
+ for(let i=0;i<6;i++)add()}],
+['Une pub vidéo se lance…',()=>{busy=1;const v=ov('vid','<div class="scr"><div class="dvd">NE PAS APPUYER</div><p>▶ PUB — Votre film commence…</p><button class="skip" disabled>Passer dans 5</button></div>');let t=5;const s=v.querySelector('.skip');
+ const iv=setInterval(()=>{t--;if(t>0)s.textContent='Passer dans '+t;else{clearInterval(iv);s.disabled=false;s.textContent='Passer ▶'}},1000);s.onclick=()=>done(v)}],
+['La gravité s’active !',()=>{L.classList.add('fall');B.forEach(b=>pos(b,R(4,96),R(86,95)));setTimeout(()=>L.classList.remove('fall'),1200)}],
+['Le monde se retourne',()=>{st.style.transform=P(['rotate(180deg)','scaleX(-1)','rotate(90deg) scale(.6)']);setTimeout(()=>st.style.transform='',7000)}],
+['Les boutons se reproduisent !',b=>{const x=parseFloat(b.style.left),y=parseFloat(b.style.top),nb=[];for(let i=0;i<12&&B.length<140;i++)nb.push(mk(x,y,R(2.5,4.5)));setTimeout(()=>nb.forEach(c=>pos(c,cl(x+R(-20,20),4,96),cl(y+R(-20,20),8,92))),40)}],
+['Qui a éteint la lumière ?',()=>{const d=ov('dark'+(Math.random()<.5?' blur':''),'');setTimeout(()=>d.remove(),9000)}],
+['Séisme !',()=>{st.classList.add('quake');B.forEach(b=>pos(b,cl(parseFloat(b.style.left)+R(-4,4),3,97),cl(parseFloat(b.style.top)+R(-4,4),6,94)));setTimeout(()=>st.classList.remove('quake'),1600)}],
+['Bannière de cookies : refusez tout',()=>{busy=1;const c=ov('blk','<div class="ck"><h3>🍪 Nous respectons votre vie privée</h3><p>Nos 847 partenaires adorent vos boutons rouges.</p><button class="ok">Tout accepter</button><details><summary>Paramètres</summary><div class="sw"></div><button class="cf" disabled>Confirmer mes choix</button></details></div>');
+ const sw=c.querySelector('.sw');['Publicité ciblée','Intérêts légitimes','Revente de vos clics','Cookies au chocolat','Rayons gamma','Partenaires douteux'].forEach(t=>sw.insertAdjacentHTML('beforeend',`<label><input type="checkbox" checked> ${t}</label>`));
+ const cf=c.querySelector('.cf'),cbs=[...sw.querySelectorAll('input')];cbs.forEach(i=>i.onchange=()=>cf.disabled=cbs.some(x=>x.checked));
+ c.querySelector('.ok').onclick=()=>{cbs.forEach(i=>i.checked=true);cf.disabled=true;say('« Tout accepter », c’est le piège 😈')};cf.onclick=()=>done(c)}],
+['Les boutons ont peur de vous !',()=>{flee=Date.now()+6000;L.classList.add('scare');setTimeout(()=>L.classList.remove('scare'),6000)}],
+['Un GROS bouton arrive',()=>{busy=1;let k=5;const o=ov('','<button class="rb" style="--s:40vmin;left:50%;top:50%"></button><p class="hint">Encore 5 clics…</p>');const b=o.querySelector('.rb'),h=o.querySelector('.hint');
+ b.onclick=()=>{k--;beep();b.style.setProperty('--s',(8+k*7)+'vmin');b.style.left=R(25,75)+'%';b.style.top=R(30,70)+'%';h.textContent=`Encore ${k} clics…`;
+  if(!k){done(o);say('Il en reste 5 petits…');for(let i=0;i<5;i++)mk(R(10,75),R(15,80),3)}}}],
+['Écran bleu !',()=>{busy=1;const o=ov('bsod','<h1>:(</h1><p>Votre mur a rencontré un problème et doit redémarrer.</p><p class="pc">0 %</p><button hidden>Cliquer pour redémarrer</button>');let p=0;const pc=o.querySelector('.pc'),bt=o.querySelector('button');
+ const iv=setInterval(()=>{p=Math.min(100,p+(R(2,12)|0));pc.textContent=p+' % terminé';if(p>=100){clearInterval(iv);bt.hidden=false}},350);bt.onclick=()=>{done(o);sh()}}],
+['Disco !',()=>{room.classList.add('disco');setTimeout(()=>room.classList.remove('disco'),6000)}]
+];
+$('#k').nextSibling.textContent='/'+E.length;
+function press(b){if(busy)return;n++;$('#n').textContent=n;beep();b.classList.add('p');setTimeout(()=>b.classList.remove('p'),200);
+ if(b.key){busy=1;$('#door').classList.add('open');say('Clac… la porte s’ouvre !');
+  setTimeout(()=>{const w=ov('blk','<div class="ck"><h3>🚪 Tu t’es échappé !</h3><p>Il t’a fallu '+n+' clic'+(n>1?'s':'')+' pour trouver le bon bouton.</p><button class="ok">Rejouer</button></div>');w.querySelector('.ok').onclick=()=>location.reload()},2400);return}
+ if(!q.length)q=E.map((_,i)=>i).sort(()=>Math.random()-.5);const i=q.pop();seen.add(i);$('#k').textContent=seen.size;say(E[i][0]);E[i][1](b)}
+addEventListener('pointermove',e=>{const s=document.documentElement.style;s.setProperty('--mx',e.clientX+'px');s.setProperty('--my',e.clientY+'px');
+ if(Date.now()<flee)B.forEach(b=>{const r=b.getBoundingClientRect(),dx=r.x+r.width/2-e.clientX,dy=r.y+r.height/2-e.clientY,d=Math.hypot(dx,dy)||1;
+  if(d<160)pos(b,cl(parseFloat(b.style.left)+dx/d*8,3,97),cl(parseFloat(b.style.top)+dy/d*10,8,94))})});
+for(let j=0;j<6;j++)for(let i=0;i<12;i++)mk(6+i*5.8,12+j*12,4.2);
+[[10,90,3.4],[40,92,3],[72,88,3],[76,14,3],[96,50,3],[3,50,3]].forEach(a=>mk(...a));
+P(B).key=1;
+setTimeout(()=>say('Enfermé ! Un seul bouton ouvre la porte…'),600);
+</script></body></html>
